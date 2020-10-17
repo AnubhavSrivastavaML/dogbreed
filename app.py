@@ -1,7 +1,5 @@
-from multiprocessing import Queue , Process
 from flask import Flask, request, jsonify
 from datetime import datetime
-from model import pedestrian
 from PIL import Image
 import numpy as np
 import sqlite3
@@ -24,7 +22,7 @@ app = Flask(__name__)
 
 labelsPath = "model.names"
 LABELS = open(labelsPath).read().strip().split("\n")
-weightsPath = "yolov3-tiny_6500.weights"
+weightsPath = "yolov3-tiny_6000.weights"
 print(weightsPath)
 configPath = "yolov3-tiny.cfg"
 net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
@@ -33,7 +31,7 @@ ln = net.getLayerNames()
 ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 def detect(image):
-
+	image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 	vehicle_info = []
 	(H, W) = image.shape[:2]
 	#print(H,W)
@@ -69,7 +67,7 @@ def detect(image):
 		for i in idxs.flatten():
 			(x, y) = (boxes[i][0], boxes[i][1])
 			(w, h) = (boxes[i][2], boxes[i][3])
-			#text = "{}".format(LABELS[classIDs[i]])
+			text = "{}".format(LABELS[classIDs[i]])
 			vehicle_info.append([x,y,w,h,text])
 			#print(x,y,w,h)
 			#image =cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),3)
@@ -87,14 +85,15 @@ def process_image():
 	nparr = np.fromstring(base64.b64decode(image), np.uint8)
 	img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 	data = detect(img)
-	return jsonify({'msg': 'success'})
+	print(data)
+	return jsonify({'msg': 'success','status':'red','coords':data})
 
 
 
 
 
 
-#detector = pedestrian()
+
 
 
 
