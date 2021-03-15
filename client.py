@@ -4,7 +4,7 @@ import base64
 import json
 
 url = 'http://localhost:5000/im_size'
-image_file = '/home/anubhav/Competitions/dog_breed/test/0a0b97441050bba8e733506de4655ea1.jpg'
+image_file = 'images/0a0b97441050bba8e733506de4655ea1.jpg'
 image = open(image_file, 'rb')
 image_read = image.read()
 image_64_encode = base64.b64encode(image_read)
